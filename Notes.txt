@@ -1,0 +1,227 @@
+[root@rhel ~]# history
+    1  clear
+    2  vi file1.txt
+    3  sort file1.txt
+    4  vi nums.doc
+    5  sort -n nums.doc
+    6  nr
+    7  vi data.txt
+    8  sort -u data.txt
+    9  cat data.txt
+   10  vi data1.txt
+   11  sort -k2 data1.txt
+   12  sort -k1 data1.txt
+   13  sort -k1,2 data1.txt
+   14  vi month.txt
+   15  sort -M month.txt
+   
+   User Management System
+   types of users and range of each:
+   user type.......Range in version 7,8,9....range in version 5-6
+   
+   privileged user -> 0-199-----> 0-199
+   System users -> 201-999-----> 201-499
+   NOrmal users -> 1000- 60000-->500-60000
+   
+   What is root?
+   hard drive has root partition
+   # -> default user , already created in system
+   $ -> new user chya pudhe yeta
+   
+   # useradd and passwd
+   # authentication and auth
+   # interview ques:
+     there are 7 fields in /etc/passwd file:
+     1. username, passwd mask, userid, groupid, GECOS name, home directory of user, shell access of user
+   #modification of userdata in RHEL
+   > usermod [options][arguments] [username]
+   eg: usermod -s /sbin/nologin nisha
+   options:(to change above mentioned fields)
+   -u = uid
+   -g = gid
+   -c = GECOS name //ful name 
+   -d = home directory change
+   -s = shell
+   -l = login name //change username
+   eg:
+  1. usermod -u 111 prachi
+   check : cat /etc/passwd
+  2. usermod -g 100 prachi
+   check same
+  3. usermod -c manager prachi
+   check
+  4. usermod -d /mnt prachi (usually do not change this)
+  5. usemod -s /sbin/nologin prachi
+  6. usermod -l xyz prachi
+  
+  
+  or useradd -u 222 ram (by default username ram)
+  
+  
+   shell - window to access or terminal
+   ->bash,ssh, 
+[root@rhel ~]# history
+    1  clear
+    2  useradd unnati
+    3  passwd unnati
+    4  usermod -u 111 unnati
+    5  cat /etc/passwd
+    6  usermod -g 100 unnati
+    7  cat /etc/group
+    8  usermod -c manager unnati 
+    9  cat /etc/passwd
+   10  usermod -d /mnt unnati
+   11  cat /etc/passwd
+   12  usermod -s /sbin/nologin unnati
+   13  cat /etc/passwd
+   14  usermod -l prac unnati
+   15  cat /etc/passwd
+   16  clear
+   19  useradd -u 2222 shyam
+   20  cat /etc/passwd
+   21  history
+
+## Group management 
+group  - collection of users
+location - /etc/group
+fiels - 1. grp name
+      2. password mask 
+      3. group id
+      4. list of members 
+
+  primary - every user 1 permission group -> -g
+  secondary - user can be part of multiple  group -> -G
+
+  >groupadd groupname
+  check: cat /etc/group
+
+  //add user
+  > userass
+  
+  //assign myuser to linux group
+  >groupadd -G linux myuser
+  >cat /etc/group
+  >id myuser
+
+ //add user to mygroup
+ >>groupadd -G mygroup myuser (not in linux anymore)
+
+ //to add in multiple grps
+ >usermod -aG myuser
+
+Practically:
+[root@rhel ~]# history
+    1  clear
+    2  cat /etc/default/useradd
+    3  groupadd mygroup
+    4  cat /etc/group
+    5  groupadd linux
+    6  cat /etc/group
+    7  useradd myuser
+    8  passwd myuser
+    9  id myuser
+   10  usermod -G linux myuser
+   11  cat /etc/group
+   12  usermod -G mygroup myuser
+   13  cat /etc/group
+   14  id myuser
+   15  cat /etc/group
+   16  usermod -aG linux myuser
+   17  cat /etc/group
+   18  id myuser
+   19  history
+
+   
+   Answers:
+   1. Normal user
+   2. False
+   3. False 
+   4. True
+   5. False
+   6. True
+   7. False
+   8. True
+   9. False
+   10. True
+   11. False
+   12. False
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   `
