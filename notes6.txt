@@ -1,0 +1,113 @@
+##Network module
+
+#how to setup ip address on a system: each system have ip and host and gateway and DNS server
+#to setup this:
+ 1. COmmand line:
+   file: /etc/hostname
+
+    >hostname
+    >hostnamectl set-hostname <hostname>
+    check image network_setup.png
+
+ 2. Semigraphical: network manager
+    >nmtui 
+     {-click on edit -> make changes -> save ->back -> activate a connection -> 
+     select the connection -> activate -> back -> quit}
+    >ip a
+    >nmcli device show
+
+ 3. Graphical: network manager
+  - using setting option in GUI -> network -> click on gear icon ->
+    make changes -> save -> activate the connection  
+  - while changing DNS server, make sure to uncheck "automatic"
+    option and then add the DNS server IP address      
+
+
+####FIREWALL
+#firewall is a software that is used to protect the system from unauthorized access and to control 
+the incoming and outgoing traffic. It is used to block the unwanted traffic
+ and to allow the wanted traffic.
+ port no :
+ - 80: HTTP
+ - 443: HTTPS
+ - 22: SSH
+ - 25: SMTP
+ - 110: POP3    
+
+ practical:
+  1. check firewall status:
+    >sudo systemctl status firewalld
+  2. start firewall:
+    >sudo systemctl start firewalld
+  3. enable firewall:
+    >sudo systemctl enable firewalld
+
+####NFS (Network File System):
+#NFS is a protocol that is used to share files and directories over a network. It allows    
+port - 2049
+package  - nfs-utils
+file - /etc/exports
+
+SERVER SIDE:
+[root@rhel ~]# history
+    1  clear
+    2  yum install nfs-utils
+    3  mkdir /nfsdata
+    4  vi /etc/exports            // WIRTE /nfsdata *(rw,sync)
+    5  chmod 777 /nfsdata/
+    6  exports -arv
+    7  exportfs -arv
+    8  systemctl restart nfs-server.service
+    9  systemctl enable nfs-server.service
+   10  firewall-cmd --permanent --add-service=nfs
+   11  firewall-cmd --reload
+   12  touch /nfsdata/myfile{1..10}.txt
+   13  ls /nfsdata/
+   14  ip a
+   15  ls /nfsdata/
+   16  history 
+
+CLIENT SIDE:
+
+    1  yum install nfs-utils
+    2  mkdir /mydata
+    3  mount -t nfs 10.0.2.2:/nfsdata /mydata
+    4  df -hT
+    5  ls /mydata
+    6  touch /mydata/linux{1..10}.doc
+    7  history
+
+    rpm -q subscription-manager
+    dnf install subscription-manager
+    subscription-manager register --username= --password=
+    subscription-manager attach --auto
+
+    ####
+
+  Server side:
+  1  yum install nfs-utils
+    2  mkdir /nfsdata
+    3  vi /etc/exports
+    4  chmod 777 /nfsdata/
+    5  exportfs -arv
+    6  systemctl restart nfs-server
+    7  systemctl enable  nfs-server
+    8  firewall-cmd --permanent --add-service=nfs
+    9  firewall-cmd --reload
+   10  touch /nfsdata/unnati{1..10}
+   11  ls /nfsdata
+   12  ip a
+
+   
+    CLIENT:
+    1  yum install nfs-utils
+    2  yum install nfs-utils autofs
+    3  vi /etc/auto.master
+    4  vi /etc/auto.any
+    5  systemctl restart autofs.service
+    6  systemctl enable autofs.service
+    7  ls /
+    8  cd /redhat/
+    9  ls
+   10  cd linux
+   11  ls

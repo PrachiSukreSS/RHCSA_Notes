@@ -1,0 +1,24 @@
+##PODMAN AND CONTAINERS
+container - by default immutable, isolated, and portable.
+- ekdach banau shakto...image multiple times use karu shakto 
+ It is a standard unit of software that packages up code and all its dependencies so the
+  application runs quickly and reliably from one computing environment to another. 
+  A container image is a lightweight, standalone, executable package of software that includes 
+  everything needed to run an application: code, runtime, system tools, system libraries, and settings.
+podman - is a container engine that is used to create, manage, and run containers.
+
+Bare metal - 
+
+
+daemon - service
+dif bet podman and docker- 
+podman - daemon less container engine, rootless container engine, compatible with docker cli,
+docker - daemon based container engine, requires root privileges, not compatible with podman cli,
+podman run -it --rm --name mycontainer alpine sh      
+
+
+ practical - 
+
+ user switch to container id -
+ run :
+ cat /etc/os-release

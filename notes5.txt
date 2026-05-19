@@ -1,0 +1,454 @@
+##Storage Management
+
+start -----> boot process --------> login screen
+1.power on :
+BIOS(redhat) OR UEFI firmware is executed //
+POST (Power On Self Test) is performed: 
+   -Checks hardware components
+   -Initializes hardware
+   -Searches for bootloader
+  
+2. Bootloader (GRUB) is loaded :
+      -GRUB (Grand Unified Bootloader) is a common bootloader used in Linux systems
+      -GRUB is responsible for loading the Linux kernel and initial RAM disk (initrd) into memory
+      -GRUB provides a menu to select the operating system or kernel version to boot
+
+3.kERNEL is loaded :
+      -The Linux kernel is loaded into memory by GRUB
+      -The kernel initializes hardware, mounts the root filesystem, and starts the init process
+
+4 Initramfs(Initial RAM Filesystem) process is started :
+      -The init process is the first process started by the kernel
+      -It is responsible for starting all other processes and services on the system
+      -In modern Linux systems, systemd is commonly used as the init system
+
+5. Switch to real root filesystem :
+      -The initramfs process mounts the real root filesystem and switches to it
+      -The system is now fully booted and ready for use
+
+6.Init system starts :
+      -The init system (e.g., systemd) starts various services and processes based on the configuration files
+      -The system is now fully operational and ready for user interaction
+      - older uses- SysVinit, Upstart, OpenRC, etc.
+
+7. Syste, services and targets
+      -The init system manages the startup and shutdown of services and targets
+      -Services are individual programs that provide specific functionality (e.g., networking, web server)
+      -Targets are groups of services that are started together to achieve a specific state (e.g., multi-user.target for a multi-user environment)
+
+8. Login screen is displayed :
+      -After all necessary services and targets are started, the login screen is displayed
+      -Users can log in to the system and start using itLogout and shutdown :
+      -Users can log out of the system, which will return them to the login screen
+      -Users can also shut down or reboot the system using appropriate commands (e.g., shutdown, reboot)            
+
+##Types of boot process:
+1. Cold boot/Hard boot: Starting the computer from a powered-off state.
+2. Warm boot/hot boot: Restarting the computer without turning off the power (e.g., using 
+Inshort process:
+ 1. Power on
+ 2. BIOS/UEFI
+ 3. GRUB
+ 4. Kernel
+ 5. Initramfs
+ 6. Switch to real root filesystem
+ 7. Init system starts
+ 8. Login screen is displayed
+
+
+##Creating partitions on a disk:
+1. Identify the disk: Use commands like `lsblk` or `fdisk -l
+2. Create a new partition: Use a partitioning tool like `fdisk`, `parted`, or `gparted` to create a new partition on the disk.
+3. Format the partition: After creating the partition, format it with a filesystem (e.g., ext4, xfs) using the `mkfs` command.
+4. Mount the partition: Create a mount point (e.g., /mnt/mydisk) and mount the partition using the `mount` command.
+5. Update /etc/fstab: To ensure the partition is mounted automatically at boot, add an entry to the /etc/fstab file with the appropriate options.
+
+practical of RHEL9: 
+Commands:
+$lsblk
+$parted /dev/sdb
+
+(parted) mklabel gpt or 
+ if partition is not label:
+$mklabel msdos
+$print
+
+(parted) mkpart primary ext4 0% 100%
+(parted) quit
+$mkfs.ext4 /dev/sdb1
+$mkdir /mnt/mydisk
+$mount /dev/sdb1 /mnt/mydisk
+$echo "/dev/sdb1 /mnt/mydisk ext4 defaults 0 0" >> /etc/fstab     
+
+to delete partition:
+$parted /dev/sdb
+(parted) rm 1
+(parted) quit
+if it is mounted then it cannot be deleted
+
+##Mounting and unmounting filesystems:
+1. Mounting a filesystem:
+      - Use the `mount` command to mount a filesystem to a specific directory (mount point
+      - Example: `mount /dev/sdb1 /mnt/mydisk` mounts the partition /dev/sdb1 to the directory /mnt/mydisk
+2. Unmounting a filesystem:
+      - Use the `umount` command to unmount a filesystem from its mount point
+      - Example: `umount /mnt/mydisk` unmounts the filesystem from the directory /mnt/mydisk
+3. Check mounted filesystems:
+      - Use the `df -h` command to check the currently mounted filesystems and their usage
+      - Use the `mount` command without arguments to see all currently mounted filesystems
+4. Automatic mounting at boot:      
+      - To ensure a filesystem is mounted automatically at boot, add an entry to the /etc/fstab file with the appropriate options
+      - Example entry: `/dev/sdb1 /mnt/mydisk ext4 defaults 0 0` mounts /dev/sdb1 to /mnt/mydisk with default options at boot
+
+      practical of RHEL9:
+      $mount /dev/sdb1 /mnt/mydisk
+      $umount /mnt/mydisk
+      $df -h
+      $mount
+      $echo "/dev/sdb1 /mnt/mydisk ext4 defaults 0 0" >> /etc/fstab           
+
+ ####Swap Partions:
+   //when physical memory (RAM) is full, the system can use swap space on the disk to temporarily store data 
+   that would otherwise be held in RAM. This helps prevent out-of-memory errors and allows the system to continue 
+   functioning even when RAM is fully utilized.   
+//processes in running state are stored in RAM, but when RAM is full, the system can move some of these processes to swap space on the disk. 
+This allows the system to free up RAM for other processes and continue running without crashing. However, using swap space is slower than using
+ RAM, so it is generally recommended to have enough physical memory to avoid excessive swapping.
+   swap la mount karat nahi apn
+
+
+
+#commands:
+      >mkswap /dev/sda1 //will get block size and total size of swap partition
+      >echo "UUID =.... swap swap defaults 0 0" > /etc/fstab //to add entry in fstab file for swap partition
+      >vi /etc/fstab //to check entry of swap partition in fstab file
+      >free -h //to check swap space usage
+      >swapon -a //to enable swap space
+      >swapoff -a //to disable swap space
+      >free -h //to check swap space usage
+      >free -m //to check swap space usage in megabytes
+      >free -g //to check swap space usage in gigabytes
+
+ #blkid : 
+      - The `blkid` command is used to display information about block devices, including their UUIDs, labels, and filesystem types.
+      - Example: `blkid /dev/sdb1` will show the UUID, label, and filesystem type of the partition /dev/sdb1.     
+
+Practical:
+#lsblk
+[root@localhost ~]# parted
+GNU Parted 3.5
+Using /dev/sda 
+Welcome to GNU Parted! Type 'help' to view a list of commands.
+(parted) p                                                                
+Error: /dev/sda: unrecognised disk label
+Model: VMware, VMware Virtual S (scsi)                                    
+Disk /dev/sda: 12.9GB
+Sector size (logical/physical): 512B/512B
+Partition Table: unknown
+Disk Flags: 
+(parted) mklabel                                                          
+New disk label type? msdos                                                
+(parted) p                                                                
+Model: VMware, VMware Virtual S (scsi)
+Disk /dev/sda: 12.9GB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start  End  Size  Type  File system  Flags
+
+(parted) mkpart                                                           
+Partition type?  primary/extended? primary                                
+File system type?  [ext2]?                                                
+Start? 1M
+End? 1025M
+Warning: The resulting partition is not properly aligned for best performance: 1953s % 2048s != 0s
+Ignore/Cancel? Ignore                                                     
+(parted) p                                                                
+Model: VMware, VMware Virtual S (scsi)
+Disk /dev/sda: 12.9GB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start   End     Size    Type     File system  Flags
+ 1      1000kB  1025MB  1024MB  primary  ext2
+
+(parted) quit                                     
+
+[root@localhost ~]# partprobe /dev/sda
+
+[root@localhost ~]# lsblk
+NAME          MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+sda             8:0    0    12G  0 disk 
+└─sda1          8:1    0 976.6M  0 part 
+sr0            11:0    1 170.5M  0 rom  /run/media/prachisukre/CDROM
+sr1            11:1    1  12.7G  0 rom  /run/media/prachisukre/RHEL-9-7-0-BaseOS-x86_64
+nvme0n1       259:0    0    20G  0 disk 
+├─nvme0n1p1   259:1    0   600M  0 part /boot/efi
+├─nvme0n1p2   259:2    0     1G  0 part /boot
+└─nvme0n1p3   259:3    0  18.4G  0 part 
+  ├─rhel-root 253:0    0  16.4G  0 lvm  /
+  └─rhel-swap 253:1    0     2G  0 lvm  [SWAP]
+
+[root@localhost ~]# mkswap /dev/sda1
+Setting up swapspace version 1, size = 976.6 MiB (1023995904 bytes)
+no label, UUID=203a81b6-fb33-4bfa-a3a0-3e5edc1ed726
+
+[root@localhost ~]# echo "UUID=203a81b6-fb33-4bfa-a3a0-3e5edc1ed726 swap swap defaults 0 0" >> /etc/fstab
+
+[root@localhost ~]# vi /etc/fstab
+
+[root@localhost ~]# free -h
+               total        used        free      shared  buff/cache   available
+Mem:           1.6Gi       1.1Gi       138Mi        21Mi       581Mi       544Mi
+Swap:          2.0Gi          0B       2.0Gi
+[root@localhost ~]# free -m
+               total        used        free      shared  buff/cache   available
+Mem:            1674        1129         138          21         581         544
+Swap:           2047           0        2047
+
+[root@localhost ~]# swapoff -a
+
+[root@localhost ~]# swapon -a
+
+[root@localhost ~]# free -h
+               total        used        free      shared  buff/cache   available
+Mem:           1.6Gi       1.1Gi       138Mi        21Mi       580Mi       542Mi
+Swap:          976Mi          0B       976Mi
+
+
+####LVM (Logical Volume Manager):
+ //jr apn 512kb ch partition banvl ani nantr samjla ki 1 mb ch partition banvaychi ahe, tar apn LVM vaprun logical volume create karu shakto.
+   - LVM is a flexible and powerful storage management system that allows you to create logical volumes on top of physical storage devices.
+   - LVM provides features like resizing volumes, creating snapshots, and managing storage more efficiently.
+   - With LVM, you can create logical volumes that can span across multiple physical disks, making it easier to manage storage and improve performance.
+
+   SIMPLE:
+practical: COMMANDS:
+]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+parted /dev/sda 
+mkpart primary 1MiB 748MiB
+mkpart primary 748MiB 1400MiB
+partprobe
+
+pvcreate /dev/sda1
+pvcreate /dev/sda2
+
+vgremove -y myvg
+vgremove -y myvg2
+
+vgcreate myvg /dev/sda1 /dev/sda2
+
+lvcreate -L 1G -n mylvm myvg
+
+mkfs.ext4 /dev/myvg/mylvm
+
+mkdir -p /data1
+mount /dev/myvg/mylvm /data1
+
+df -h
+]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
+root@localhost ~]# lsblk
+NAME          MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+sda             8:0    0    13G  0 disk 
+└─sda1          8:1    0 713.3M  0 part 
+sr0            11:0    1 170.5M  0 rom  /run/media/psukre/CDROM
+sr1            11:1    1  12.7G  0 rom  /run/media/psukre/RHEL-9-7-0-BaseOS-x86_64
+nvme0n1       259:0    0    14G  0 disk 
+├─nvme0n1p1   259:1    0   600M  0 part /boot/efi
+├─nvme0n1p2   259:2    0     1G  0 part /boot
+└─nvme0n1p3   259:3    0  12.4G  0 part 
+  ├─rhel-root 253:0    0    11G  0 lvm  /
+  └─rhel-swap 253:1    0   1.4G  0 lvm  [SWAP]
+
+[root@localhost ~]# pvcreate /dev/sda1
+WARNING: ext4 signature detected on /dev/sda1 at offset 1080. Wipe it? [y/n]: y
+  Wiping ext4 signature on /dev/sda1.
+  Physical volume "/dev/sda1" successfully created.
+[root@localhost ~]# pvcreate /dev/sda2
+  No device found for /dev/sda2.
+
+[root@localhost ~]# parted /dev/sda
+GNU Parted 3.5
+Using /dev/sda
+Welcome to GNU Parted! Type 'help' to view a list of commands.
+(parted) p                                                                
+Model: VMware, VMware Virtual S (scsi)
+Disk /dev/sda: 14.0GB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start  End    Size   Type     File system  Flags
+ 1      512B   748MB  748MB  primary
+
+(parted) mkpart
+Partition type?  primary/extended? p                                      
+File system type?  [ext2]?                                                
+Start? 748m                                                               
+End? 1438                                                                 
+Warning: The resulting partition is not properly aligned for best performance: 1460938s % 2048s != 0s
+Ignore/Cancel? Ignore                                                     
+(parted) quit                                                             
+Information: You may need to update /etc/fstab.
+
+[root@localhost ~]# pvcreate /dev/sda2
+  Physical volume "/dev/sda2" successfully created.
+
+[root@localhost ~]# pvs
+  PV             VG   Fmt  Attr PSize    PFree   
+  /dev/nvme0n1p3 rhel lvm2 a--    12.41g       0 
+  /dev/sda1           lvm2 ---  <713.35m <713.35m
+  /dev/sda2           lvm2 ---  <658.04m <658.04m
+
+[root@localhost ~]# vgcreate myvg /dev/sda
+  Cannot use /dev/sda: device is partitioned
+  Command requires all devices to be found.
+
+[root@localhost ~]# vgcreate myvg /dev/sda1
+  Volume group "myvg" successfully created\
+
+[root@localhost ~]# vgcreate /dev/sda2
+  No command with matching syntax recognised.  Run 'vgcreate --help' for more information.
+  Correct command syntax is:
+  vgcreate VG_new PV ...
+
+[root@localhost ~]# vgcreate myvg2 /dev/sda2
+  Volume group "myvg2" successfully created
+
+[root@localhost ~]# vgs
+  VG    #PV #LV #SN Attr   VSize   VFree  
+  myvg    1   0   0 wz--n- 712.00m 712.00m
+  myvg2   1   0   0 wz--n- 656.00m 656.00m
+  rhel    1   2   0 wz--n-  12.41g      0 
+
+[root@localhost ~]# lvcreate -L 1G -n mylvm myvg1
+  Volume group "myvg1" not found
+  Cannot process volume group myvg1
+
+[root@localhost ~]# lvcreate -L 1G -n mylvm myvg
+  Volume group "myvg" has insufficient free space (178 extents): 256 required.
+
+[root@localhost ~]# lvs
+  LV   VG   Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  root rhel -wi-ao---- <11.01g                                                    
+  swap rhel -wi-ao----   1.40g                                                    
+
+[root@localhost ~]# vgs
+  VG    #PV #LV #SN Attr   VSize   VFree  
+  myvg    1   0   0 wz--n- 712.00m 712.00m
+  myvg2   1   0   0 wz--n- 656.00m 656.00m
+  rhel    1   2   0 wz--n-  12.41g      0 
+[root@localhost ~]#  mkfs.ext4 /dev/myvg/mylvm
+
+//temp mount
+#mount /dev/myvg/mylvm data1
+
+###to add 2 disk of 10G each and create  physical volm,volm grp and logical volume of 12G
+//aplyla 12B cha volm banvaychaybut aplyakade 2 10 gb che disk ahet ma apn tyanna merge karun 20 GB cha volm Grp banavnar, 
+ani ma ek 12 gb cha (logical)volm banvaycha  
+lsblk
+pvcreate /dev/sdb /dev/sdc
+vgcreate myvg /dev/sdb /dev/sdc
+lvcreate -L 12G -n mylv myvg
+mkfs.ext4 /dev/myvg/mylv
+mkdir /data
+mount /dev/myvg/mylv /data  //temp mount
+df -h
+
+//to make it permanent mount
+>blkid /dev/myvg/mylv
+>echo "UUID=.... /data ext4 defaults 0 0" >> /etc/fstab 
+OR
+>vi /etc/fstab
+   //paste UUID=.... /data ext4 defaults 0 0
+>mount -a  //to check if it is working or not
+>df -hT /data  //to check if it is mounted or not
+####Now we saw for 2 disks now lets see for 2 partitions of 1 disk each 
+
+# From two partitions
+    5  truncate -s 10G /tmp/test3
+    6  losetup /dev/loop3 /tmp/test3
+    7  lsblk 
+    8  parted /dev/loop3 
+    8  partprobe /dev/loop3
+    9  lsblk
+    9  pvcreate /dev/loop3p1 /dev/loop3p2 
+   10  pvs
+   11  vgcreate vg1 /dev/loop3p1 /dev/loop3p2
+   12  vgs
+   13  lvcreate -L 2G -n lv1 vg1
+   14  lvs
+   15  mkfs.ext4 /dev/vg1/lv1 
+   16  blkid /dev/vg1/lv1 
+   17  mkdir /mydata
+   18  vi /etc/fstab 
+   19  mount -a
+   20  df -hT
+
+
+   ##Now From single partition creating lvm
+-create partion -2gb
+-convert to pv -2gb
+-vol grp madhe -2gb
+-lv create 1g
+-extend it 
+//vg la extend karaych
+//parat lv la extent karaych asel tr karu shakto
+
+practical:
+truncate -s 2G /tmptest
+losetup /dev/loop4 /tmp/test3
+parted /dev/loop4 mkpart primary 1MiB 2049MiB
+partprobe
+pvcreate /dev/loop4p1
+vgcreate myvg /dev/loop4p1
+lvcreate -L 1G -n mylv myvg
+mkfs.ext4 /dev/myvg/mylv
+mkdir /data
+mount /dev/myvg/mylv /data
+
+lvextend -L +1G /dev/myvg/mylv OR lvextend -l +100%FREE /dev/myvg/mylv
+resize2fs /dev/myvg/mylv
+
+df -h
+
+##LVM with PE Size:
+- When creating a volume group (VG) in LVM, you can specify the Physical Extent (PE) size, 
+  which is the smallest unit of storage that can be allocated to a logical
+1LE = 4mb and 1PE = 4mb 
+#############################################################################################
+###Using PE AND VE  size 
+root@rhel ~]# history
+    1  clear
+    2  lsblk
+    3  pvcreate /dev/loop1
+    4  clear
+    5  truncate -s 10G /tmp/test
+    6  losetup /dev/loop1 /tmp/test
+    7  lsblk
+    8  pvcreate /dev/loop1
+    9  pvs
+   10  vgs
+   11  vgcreate -s 8M myvg /dev/loop1                    //here we have convert 4MB to 8MB by using -s option
+   12  vgs
+   13  vgdisplay
+   14  lvcreate -l 10 -n mylv myvg                   //to make logical volm of 80mb as 1PE is 8MB and we have to make 10PE
+   15  lvs
+   16  lvdisplay /dev/myvg/mylv
+   17  lvs
+   18  mkdir /linux
+   19  blkid /myvg/mylv
+   20  mkfs.ext4 /dev/myvg/mylv
+   21  vi /etc/fstab
+   22  mount -a
+   23  systemctl daemon-reload
+   24  df -h
+   25  df -hT
+   26  history
+[root@rhel ~]# 
+
+
+

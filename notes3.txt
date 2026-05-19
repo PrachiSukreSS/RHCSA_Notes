@@ -1,0 +1,235 @@
+##module 6
+#at job -> 1 time job schedule
+check -> atq
+to make exception: at.deny ->user check entry here, if not here it is allowed  
+oot@rhel ~]# history
+    1  clear
+    2  which useradd
+    3  date
+    4  at now + 2 min
+    5  yum install at
+    6  at now + 2 min
+    7  systemctl restart atd
+    8  systemctl status atd
+    9  date
+   10  at 10:58
+
+   pract2:
+  #dnf -y install at
+  #systemctl start atd
+  #systemctl enable atd
+  #date
+  #at 10:40
+     > echo "hello world" > /home/user1/hello.txt
+  #atq
+
+  prac3(task at job):
+   2  dng install at -y
+    3  dnf install at -y
+    4  systemctl start atd
+    5  systemctl enable atd
+    6  date
+    7  at 00:15
+    8  atd
+    9  atq
+   10  date
+   11  ls /tmp
+   12  cat text.txt
+   13  cd /tmp
+   14  cat text.tmp
+   15  cat text.txt
+   16  cat test.txt
+   17  clear
+   18  exit
+   19  clear
+   20  dnf install at -y
+   21  systectl start atd
+   22  systemctl start atd
+   23  systemctl enable atd
+   24  at teatime
+       >usermod -s /sbin/nologin farah
+   26  atq
+   29  at 3pm
+       >usermod -u 2044 berie
+   30  at 10am
+        >echo "heloo" > /etc/motd 
+   31  atq
+       at 10pm
+          >at> useradd gargi
+          >at> echo "echo redhat | passwd --stdin gargi" | at now + 1 minute
+   32  at 5pm
+       >at> cut -d: -f5-7 /etc/passwd > /linuxdatafile
+   33  at 10am
+      >at> grep "^farah" etc/passwd | cut -d: -f2,7 > /farahdatafile
+   34  atq
+   35  history
+to remove a scheduled at job: atrm <job_id>
+##topic: 
+
+#******compulsory 1 question#crontab -> schedule job to run at specific time
+syntax:
+* * * * * command to execute
+- - - - -
+| | | | |
+| | | | +----- day of week (0 - 7) (Sunday=0 or 7)
+| | | +------- month (1 - 12)
+| | +--------- day of month (1 - 31)
+| +----------- hour (0 - 23)
++------------- minute (0 - 59)                        
+example:
+0 5 * * * /home/user/backup.sh
+This will run the backup.sh script every day at 5:00 AM.
+prerequisite: cron service should be running
+to check cron service status: systemctl status cron
+to start cron service: systemctl start cron
+to enable cron service at boot: systemctl enable cron
+to edit crontab: crontab -e
+to view crontab: crontab -l //list jobs of user
+to remove crontab: crontab -r 
+syntax:
+from particular user: crontab -u username -e
+
+package: yum install cronie
+to check cronie status: systemctl status crond
+to start cronie: systemctl start crond
+to enable cronie at boot: systemctl enable crond
+restart cronie: systemctl restart crond
+
+
+
+
+04/04/26
+if we add users in at.deny they cannot schedule any job
+>add 4 users -> assign passwd ->install package 
+>yum install at
+>systemctl
+>vi /etc/at.deny
+in file:
+user3
+user4
+esc mode :wq
+out file:
+
+##setting password using at job
+useradd username
+echo password_here | /usr/bin/passwd --stdin username //do this in vim
+
+
+at.deny practical:
+
+same as at.deny but for cron jobs
+if we add users in cron.deny they cannot schedule any cron job
+cron.deny :
+[root@rhel ~]# history
+    1  yum install cronie
+    2  useradd user1
+    3  passwd user1
+    4  useradd user2
+    5  passwd user2
+    6  vi /etc/cron.deny
+    7  crontab -e
+    8  su - user1
+    9  vi /etc/cron.deny
+   10  cat /etc/cron.deny
+   11  vi /etc/cron.deny
+   12  cat /etc/cron.deny
+   13  date
+   14  su - user1
+   15  history
+
+
+SGID (Set group ID) - when we set sgid permission on a directory, the files created inside that directory will inherit the group ownership of the directory instead of the user who created the file.
+to set sgid permission: chmod g+s directory_name
+to check sgid permission: ls -l directory_name
+example:
+mkdir /data
+chmod g+s /data //set sgid permission on /data directory WHERE s = sgid bit and g = group
+ls -ld /data
+drwxr-sr-x 2 root root 4096 Apr 26 12:00 /data //here s=sgid bit is set and group ownership is root 
+when a user creates a file inside /data directory, the group ownership of the file will be root instead of the user's primary group.
+
+Create /xdata with group inheritance
+mkdir /xdata
+chown :linuxadmin /xdata
+chmod 2777 /xdata
+💡 Why 2777?
+2 → SGID bit
+Files inside inherit group = linuxadmin
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

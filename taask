@@ -1,0 +1,265 @@
+//create 2 primary and 2 logical partitions on the disk
+//primary partitions: /dev/sda1, /dev/sda2
+//logical partitions: /dev/sda5, /dev/sda6
+
+[root@localhost ~]# lsblk
+NAME         MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+sda            8:0    0    13G  0 disk 
+├─sda1         8:1    0 713.3M  0 part 
+└─sda2         8:2    0   658M  0 part 
+sr0           11:0    1 170.5M  0 rom  /run/media/psukre/CDROM
+sr1           11:1    1  12.7G  0 rom  /run/media/psukre/RHEL-9-7-0-BaseOS-x86_64
+nvme0n1      259:0    0    14G  0 disk 
+├─nvme0n1p1  259:1    0   600M  0 part /boot/efi
+├─nvme0n1p2  259:2    0     1G  0 part /boot
+└─nvme0n1p3  259:3    0  12.4G  0 part 
+  ├─rhel-root
+  │          253:0    0    11G  0 lvm  /
+  └─rhel-swap
+             253:1    0   1.4G  0 lvm  [SWAP]
+
+[root@localhost ~]# parted /dev/sda
+GNU Parted 3.5
+Using /dev/sda
+Welcome to GNU Parted! Type 'help' to view a list of commands.
+(parted) p                                                                
+Model: VMware, VMware Virtual S (scsi)
+Disk /dev/sda: 14.0GB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start  End     Size   Type     File system  Flags
+ 1      512B   748MB   748MB  primary
+ 2      748MB  1438MB  690MB  primary
+
+(parted) mklabel                                                          
+New disk label type? msdos                                                
+Warning: The existing disk label on /dev/sda will be destroyed and all data on
+this disk will be lost. Do you want to continue?
+Yes/No? Yes                                                               
+(parted) p                                                                
+Model: VMware, VMware Virtual S (scsi)
+Disk /dev/sda: 14.0GB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start  End  Size  Type  File system  Flags
+
+(parted) mkpart primary 1M 2049M
+(parted) P                                                                
+Model: VMware, VMware Virtual S (scsi)
+Disk /dev/sda: 14.0GB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start   End     Size    Type     File system  Flags
+ 1      1049kB  2049MB  2048MB  primary
+
+(parted) mkpart primary 2049M 3073M
+(parted) p                                                                
+Model: VMware, VMware Virtual S (scsi)
+Disk /dev/sda: 14.0GB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start   End     Size    Type     File system  Flags
+ 1      1049kB  2049MB  2048MB  primary
+ 2      2049MB  3073MB  1024MB  primary
+
+(parted) mkpart extended 3073M 100
+Error: Can't have the end before the start! (start sector=6001953
+length=-5806640)
+(parted) p
+Model: VMware, VMware Virtual S (scsi)
+Disk /dev/sda: 14.0GB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start   End     Size    Type     File system  Flags
+ 1      1049kB  2049MB  2048MB  primary
+ 2      2049MB  3073MB  1024MB  primary
+
+(parted) mkpart extended 3073M 100%                                       
+(parted) p                                                                
+Model: VMware, VMware Virtual S (scsi)
+Disk /dev/sda: 14.0GB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start   End     Size    Type      File system  Flags
+ 1      1049kB  2049MB  2048MB  primary
+ 2      2049MB  3073MB  1024MB  primary
+ 3      3073MB  14.0GB  10.9GB  extended               lba
+
+(parted) mkpart logical 3074M 5122M
+(parted) mkpart logical 5122M 8194M
+Warning: The resulting partition is not properly aligned for best performance:
+10004481s % 2048s != 0s
+Ignore/Cancel? Cancel                                                     
+(parted) p                                                                
+Model: VMware, VMware Virtual S (scsi)
+Disk /dev/sda: 14.0GB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start   End     Size    Type      File system  Flags
+ 1      1049kB  2049MB  2048MB  primary
+ 2      2049MB  3073MB  1024MB  primary
+ 3      3073MB  14.0GB  10.9GB  extended               lba
+ 5      3074MB  5122MB  2048MB  logical
+
+(parted) mkpart logical 5122M 8194M                                       
+Warning: The resulting partition is not properly aligned for best performance:
+10004481s % 2048s != 0s
+Ignore/Cancel? Ignore                                                     
+(parted) p                                                                
+Model: VMware, VMware Virtual S (scsi)
+Disk /dev/sda: 14.0GB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start   End     Size    Type      File system  Flags
+ 1      1049kB  2049MB  2048MB  primary
+ 2      2049MB  3073MB  1024MB  primary
+ 3      3073MB  14.0GB  10.9GB  extended               lba
+ 5      3074MB  5122MB  2048MB  logical
+ 6      5122MB  8194MB  3072MB  logical
+
+(parted) quit                                                             
+Information: You may need to update /etc/fstab.
+
+[root@localhost ~]# partprobe /dev/sda
+
+[root@localhost ~]# lsblk
+NAME         MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+sda            8:0    0    13G  0 disk 
+├─sda1         8:1    0   1.9G  0 part 
+├─sda2         8:2    0   977M  0 part 
+├─sda3         8:3    0     1K  0 part 
+├─sda5         8:5    0   1.9G  0 part 
+└─sda6         8:6    0   2.9G  0 part 
+sr0           11:0    1 170.5M  0 rom  /run/media/psukre/CDROM
+sr1           11:1    1  12.7G  0 rom  /run/media/psukre/RHEL-9-7-0-BaseOS-x86_64
+nvme0n1      259:0    0    14G  0 disk 
+├─nvme0n1p1  259:1    0   600M  0 part /boot/efi
+├─nvme0n1p2  259:2    0     1G  0 part /boot
+└─nvme0n1p3  259:3    0  12.4G  0 part 
+  ├─rhel-root
+  │          253:0    0    11G  0 lvm  /
+  └─rhel-swap
+             253:1    0   1.4G  0 lvm  [SWAP]
+
+[root@localhost ~]# mkfs.xfs /dev/sda1
+meta-data=/dev/sda1              isize=512    agcount=4, agsize=124992 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=1, sparse=1, rmapbt=0
+         =                       reflink=1    bigtime=1 inobtcount=1 nrext64=0
+data     =                       bsize=4096   blocks=499968, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
+log      =internal log           bsize=4096   blocks=16384, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+
+[root@localhost ~]# mkfs.ext3 /dev/sda2
+mke2fs 1.46.5 (30-Dec-2021)
+Creating filesystem with 250112 4k blocks and 62592 inodes
+Filesystem UUID: ed847a44-af42-4e44-9713-a1a2999ddd50
+Superblock backups stored on blocks: 
+	32768, 98304, 163840, 229376
+
+Allocating group tables: done                            
+Writing inode tables: done                            
+Creating journal (4096 blocks): done
+Writing superblocks and filesystem accounting information: done
+
+[root@localhost ~]# mkfs.vfat /dev/sda3
+mkfs.fat 4.2 (2021-01-31)
+mkfs.vfat: Attempting to create a too small or a too large filesystem
+
+[root@localhost ~]# mkfs.vfat /dev/sda5
+mkfs.fat 4.2 (2021-01-31)
+
+[root@localhost ~]# mkfs.xfs /dev/sda6
+meta-data=/dev/sda6              isize=512    agcount=4, agsize=187482 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=1, sparse=1, rmapbt=0
+         =                       reflink=1    bigtime=1 inobtcount=1 nrext64=0
+data     =                       bsize=4096   blocks=749928, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
+log      =internal log           bsize=4096   blocks=16384, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+[root@localhost ~]# mkdir -p /linux/data
+[root@localhost ~]# mkdir -p /class/data
+[root@localhost ~]# mkdir -p /linux/data1
+[root@localhost ~]# mkdir -p /class/data1
+[root@localhost ~]# mount /dev/sda1 /linux/data
+[root@localhost ~]# mount /dev/sda2 /class/data
+[root@localhost ~]# mount /dev/sda5 /linux/data1
+[root@localhost ~]# mount /dev/sda6 /class/data1
+[root@localhost ~]# df -h
+Filesystem             Size  Used Avail Use% Mounted on
+devtmpfs               4.0M     0  4.0M   0% /dev
+tmpfs                  838M     0  838M   0% /dev/shm
+tmpfs                  335M  7.3M  328M   3% /run
+efivarfs               256K   57K  195K  23% /sys/firmware/efi/efivars
+/dev/mapper/rhel-root   11G  4.6G  6.5G  42% /
+/dev/nvme0n1p2         960M  368M  593M  39% /boot
+/dev/nvme0n1p1         599M  7.4M  592M   2% /boot/efi
+tmpfs                  168M  116K  168M   1% /run/user/1000
+/dev/sr0               171M  171M     0 100% /run/media/psukre/CDROM
+/dev/sr1                13G   13G     0 100% /run/media/psukre/RHEL-9-7-0-BaseOS-x86_64
+/dev/sda1              1.9G   46M  1.9G   3% /linux/data
+/dev/sda2              945M   44K  896M   1% /class/data
+/dev/sda5              2.0G  4.0K  2.0G   1% /linux/data1
+/dev/sda6              2.8G   53M  2.8G   2% /class/data1
+[root@localhost ~]# vi /etc/fstab
+[root@localhost ~]# cat /etc/fstab
+
+#
+# /etc/fstab
+# Created by anaconda on Wed Apr 29 23:21:41 2026
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk/'.
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info.
+#
+# After editing this file, run 'systemctl daemon-reload' to update systemd
+# units generated from this file.
+#
+/dev/mapper/rhel-root   /                       xfs     defaults        0 0
+UUID=745f3e57-cff8-4741-9c53-d80c813e4fa6 /boot                   xfs     defaults        0 0
+UUID=280B-D8D9          /boot/efi               vfat    umask=0077,shortname=winnt 0 2
+/dev/sda1 /linux/data   xfs  defaults        0 0
+/dev/sda2 /class/data   ext3 defaults  0 0
+/dev/sda5 /linux/data1 vfat defaults 0 0
+/dev/sda6 /class/data1 xfs  defaults 0 0
+/dev/mapper/rhel-swap   none                    swap    defaults        0 0
+[root@localhost ~]# mount -a
+[root@localhost ~]# df -h 
+Filesystem             Size  Used Avail Use% Mounted on
+devtmpfs               4.0M     0  4.0M   0% /dev
+tmpfs                  838M     0  838M   0% /dev/shm
+tmpfs                  335M  7.3M  328M   3% /run
+efivarfs               256K   57K  195K  23% /sys/firmware/efi/efivars
+/dev/mapper/rhel-root   11G  4.6G  6.5G  42% /
+/dev/nvme0n1p2         960M  368M  593M  39% /boot
+/dev/nvme0n1p1         599M  7.4M  592M   2% /boot/efi
+tmpfs                  168M  116K  168M   1% /run/user/1000
+/dev/sr0               171M  171M     0 100% /run/media/psukre/CDROM
+/dev/sr1                13G   13G     0 100% /run/media/psukre/RHEL-9-7-0-BaseOS-x86_64
+/dev/sda1              1.9G   46M  1.9G   3% /linux/data
+/dev/sda2              945M   44K  896M   1% /class/data
+/dev/sda5              2.0G  4.0K  2.0G   1% /linux/data1
+/dev/sda6              2.8G   53M  2.8G   2% /class/data1
+[root@localhost ~]# 
+

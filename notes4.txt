@@ -1,0 +1,350 @@
+##umask
+>ls -ll
+>umask
+umask is in file 
+//to change mask of root
+>vi /root/.bashrc
+  --insert at bottom of file
+//to update bashrc file
+>source /root/.bashrc   
+
+MODULE 9
+##Sudo access 
+wheel-group of users who can use sudo command
+file - /etc/sudoers
+--giving root permissions to normal user
+>sudo yum install nginx
+//depends on what permisions m=we givein the sudoers file
+
+ 1  clear
+    2  useradd deep
+    3  passwd deep
+    4  id deep
+    5  su - deep
+    6  vi /etc/sudoers
+    7  su - deep 
+    8  cat vi /etc/sudoers
+    9  sudo - deep
+   10  su - deep
+   11  history
+[root@rhel ~]# 
+
+
+       useradd deep
+    3  passwd deep
+   1  usermod -aG wheel deep
+    2  id deep
+    3  vi /etc/sudoers
+    4  cat /etc/sudoers
+    5  vi /etc/sudoers
+    6  exit
+    7  useradd deep2
+    8  exit
+    9  sudo useradd deep2 //add sudo before evrycommand
+   10  ls
+   11  ls etc/passwd
+   12  cat etc/passwd
+   13  sudo cat /etc/passwd
+   14  id deep2
+   15  visudo
+   16  sudo visudo
+   17  history
+
+
+![alt text](image.png)
+
+##shadow file - 
+
+
+##ACL (Access control List)
+What is diff betn chmod and acl? 
+//getfacl - to check acl permission of file /folder
+//setfacl - to set acl permission of file /folder
+
+Practically:
+
+   1  clear
+    2  mkdir /unnati
+    3  useradd user1
+    4  passwd user1
+    5  useradd amit
+    6  passwd amit
+    7  useradd ram
+    8  passwd ram
+    9  useradd deep
+   10  passwd deep
+   11  getfacl /unnati/
+   12  ls -ld /unnati/
+   13  setfacl -m u:user1:rwx /unnati/
+   14  ls -ld /unnati/
+   15  getfacl /unnati/
+   16  setfacl -m u:amit:r-x /unnati/
+   17  getfacl /unnati/
+   18  setfacl -m u:wx /unnati/
+   19  setfacl -m u:ram:wx /unnati/
+   20  getfacl  /unnati/
+   21  setfacl -m u:deep:x /unnati/
+   22  getfacl /unnati
+   23  su - user1
+
+   24  history
+[root@rhel ~]# 
+
+ti check : for ram user
+    6  ls /unnati/
+    7  cat /unnati/
+    8  touch new.txt
+    9  echo "hello" > new.txt
+   10  cat new.txt
+   11  history
+
+##FInd command - to find a file or a directory
+
+prectical:
+[root@rhel ~]# history
+    1  clear
+    2  find / -name passwd //search in entire system
+    3  find / -name fstab 
+    4  find / -name httpd
+    5  find / -name pass?? //
+    6  find / -name pass*//
+    7  find / -name *.html
+    8  find / -name *.txt
+    9  find / -name passwd | wc -l
+   10  find / -name passwd -type f
+   11  find / -name passwd -type d
+   12  find / -perm 777
+   14  history
+   15  touch myfile
+   16  touch /myfile
+   17  find / -name myfile
+   18  find / -perm 755
+   19  find / -perm -u=s -type f
+   20  find / -size 10k
+   21  history
+
+   ## Links : Soft/symbolic Links 
+   link: ln -s target link_name
+   hard link: ln target link_name
+
+//diff between soft link and hard link?
+hard link = 
+-for file only
+-same inode number
+-same data block
+-if original file is deleted, hard link will still work //resson - same inode number
+-cannot cross filesystem
+-cannot link to directory
+-cannot link to non-existent file
+
+Soft link:
+-for file and directory
+-different inode number
+-different data block
+-if original file is deleted, soft link will not work //reason - different inode number
+-can cross filesystem
+-can link to directory
+-can link to non-existent file
+
+kernel
+##Process in OS 
+#Types of process
+1.User process - created by user
+2.System process - created by OS
+3.Daemon process - background process, created by OS or user
+4.Interactive process - created by user, interact with user
+5.Non-interactive process - created by user, do not interact with user
+-kernel - 
+//states of process:
+ready, running, waiting, stopped, zombie
+
+defucnt/zombie process - a process that has completed execution but still has an entry in the process table. It is waiting for its parent process to read its exit status. Once the parent process reads the exit status, the zombie process is removed from the process table.
+check process state : 
+>ps 
+objects : -a - all process
+           -u - user process
+           -x - process without terminal
+           -e - all process
+           -f - full format
+           ps -p <pid> - to check specific process
+*** ->    ps -aux - to check all process with user and cpu and memory usage
+         > kill all <service_name> - to kill all process of specific service
+         > kill <pid> - to kill specific process
+         > kill -9 <pid> - to force kill specific process
+         > pkill <process_name> - to kill process by name
+         > killall <process_name> - to kill all process by name
+         > top - to check real time process and resource usage
+         > htop - to check real time process and resource usage with interactive interface
+         > nice - to set priority of process
+         > renice - to change priority of running process
+
+
+##Archive and Compress file
+>archive: //to combine multiple files into single file without compression
+ -zip : use to compress file 
+practical:
+[root@rhel sdata]# history
+    1  clear
+    2  mkdir /mydata
+    3  touch /mydata/linux{1..10}.txt
+    4  touch /mydata/myfile{1..10}.txt
+    5  ls /mydata/
+    6  yum install zip
+    7  zip unnati.zip /mydata/*
+    8  ls
+    9  mv unnati.zip /mnt
+   10  ls /mnt
+   11  ls
+   12  ls /mydata
+   13  clar
+   14  clear
+   15  history
+   16  rm -f /mydata
+   17  rm -r /mydata
+   18  y
+   19  ls /
+   20  ls /mydata
+   21  mv /mnt/unnati.zip
+   22  mv /mnt/unnati.zip .
+   23  ls
+   24  unzip unnati.zip
+   25  ls
+   26  ls mydata/
+   27  cat > myfile.txt
+   28  ls -lh
+   29  zip test1.zip myfile.txt
+   30  ls 
+   31  ls -lh
+   32  mkdir /data
+   33  touch /data/linux{1..10}.txt
+   34  touch /data/linux{1..10}.doc
+   35  touch /data/linux{1..10}.html
+   36  touch /data/linux{1..10}.pdf
+   37  mkdir /tdata/sdata -p
+   38  zip /tdata/sdata/23-04-26.zip /data/*
+   39  ls /tdata/sdata
+   40  mkdir /jdata
+   41  touch /jdata/myfile{1..10}.txt
+   42  touch /jdata/myfile{1..10}.doc
+   43  touch /jdata/myfile{1..10}.html
+   44  touch /jdata/myfile{1..10}.pdf
+   45  zip -u /tdata/sdata/23-04-26.zip/jdata/*.doc
+   46  zip -u /tdata/sdata/23-04-26.zip /jdata/*.doc
+   47  ls
+   48  ls /tdata/sdata
+   49  cd  /tdata/sdata
+   50  unzip 23-04-26.zip
+   51  ls
+   52  ls data/
+   53  ls /jdata
+   54  ls jdata/
+   55  history
+[root@rhel sdata]# 
+
+practical:(check image for command)
+   1  clear
+    2  mkdir mydir
+    3  touch mydir/file1
+    4  touch mydir/file2
+    5  touch mydir/file3
+    6  tar -cvf mydir.tar mydir/ //to archive file
+    7  ls -l mydir.tar
+    8  tar -xvf mydir.tar //to extract file
+    9  ls -l mydir/
+   10  zip -r mydir.zip mydir/ //to compress file
+   11  ls -l mydir.zip
+   12  unzip mydir.zip //to extract compressed file
+   13  ls -l mydir/
+   14  history
+
+##Tar command - to archive and compress file
+tar -cvf file.tar /path/to/directory //to archive file
+tar -xvf file.tar //to extract file
+tar -czvf file.tar.gz /path/to/directory //to archive and compress file
+tar -xzvf file.tar.gz //to extract archived and compressed file
+gzip -c file.tar > file.tar.gz //to compress file
+bzip2 -c file.tar > file.tar.bz2 //to compress file
+diff between gzip and bzip/bzip2:
+gzip - faster compression and decompression, less compression ratio
+bzip2 - slower compression and decompression, higher compression ratio
+
+to update tar file:
+tar -rvf file.tar /path/to/file //to add file to tar archive
+tar -uvf file.tar /path/to/file //to update file in tar archive   
+
+to remove file from tar archive:
+tar -r  file.tar /path/to/file //to remove file from tar archive
+
+practical:
+  59  mkdir /mydata/test/linux/data -p
+   60  touch /mydata/impfile.txt
+   61  touch /mydata/test/0linux.txt
+   62  touch /mydata/test/linux/file.txt
+   63  touch /mydata/test/linux/data/myfile.txt
+   64  ls /mydata/
+   65  ls /mydata/test
+   66  ls /mydata/test/linux
+   67  ls /mydata/test/linux/data
+   68  yum install tree //to see tree structure of directory
+   69  tree /mydata/
+   70  tar -cvf mybackup.tar /mydata //to archive file
+   71  ls
+   72  tar -tvf mybackup.tar //to see content of tar file
+   73  tar -xf mybackup.tar //to extract tar file
+   74  ls
+   75  ls mydata/
+   76  ls /mydata/test/
+   77  ls /mydata/test/linux
+   78  ls /mydata/test/linux/data
+
+   ##making tar of files with specific extension only not all files in folder
+    7  mkdir /impdata
+    8  touch /impdata/myfile{1..10}.txt
+    9  touch /impdata/myfile{1..10}.doc
+   10  touch /impdata/myfile{1..10}.html
+   11  touch /impdata/myfile{1..10}.pdf
+   12  ls /impdata/
+   13  tar -cvf mytar.tar /impdata/*.doc /impdata/*txt /impdata/*.html
+   14  ls
+   15  mv mytar.tar /mnt
+   16  cd /mnt
+   17  ls
+   18  tar -tvf mytar.tar
+   19  cd /mnt
+   20  tar -xf mytar.tar
+   21  ls
+   22  ls impdata/
+   23  cd
+
+bzip anf gzip practical:
+[root@rhel ~]# history
+    1  mkdir/ unnati
+    2  mkdir /unnati
+    3  touch /unnati/myfile{1..10}
+    4  touch /unnati/myfile{1..10}.txt
+    5  touch /unnati/myfile{1..10}.html
+    6  tar -jcvf mytar.bzip2 /unnati
+    7  ls
+    8  tar -zcvf mytar.gzip /unnati/
+    9  ls
+   10  tar -tvf mytar.bzip2
+   11  tar -tvf mytar.gzip
+   12  tar -xf mytar.bzip2 -C /mnt
+   13  ls
+   14  cd /mnt
+   15  ls
+   16  ls unnati
+   17  cd 
+   18  tar -xf mytar.gzip -C /opt
+   19  cd /opt
+   20  ls
+   21  ls unnati/
+   22  cd 
+   23  touch impfile.doc
+   24  tar -zcvf test1.gzip impfile.doc
+   25  ls
+   26  tar -jcvf test2.bzip impfile.doc
+   27  ls
+   28  ls -lh
+   29  history
+[root@rhel ~]#

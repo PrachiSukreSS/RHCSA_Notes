@@ -1,0 +1,35 @@
+##SELinux
+Enforce - eg -clg hallticket for exam
+Permissive - eg - have hallticket but no id , (exam denar using aplication)
+Disabled - nothing required
+practical:
+
+
+###SSH (Secure Shell)
+req service running and enabled in background for execution
+1. password based authentication
+vm1:
+systemctl status sshd
+ssh ram@[IP_ADDRESS]
+check using --> ls /mnt
+
+vm2:  
+useradd ram
+passwd ram
+ip a
+vi /etc/ssh/sshd_config         //add - PasswordAthentication yes
+su - ram
+touch /mnt/test.txt
+
+2. key based authentication
+
+>systemctl status sshd (to take access of user on 2nd vm on the fisrt vm without password)
+
+
+
+open 2 vm1
+in vm 1
+1.got tmp directory and creatr directory mydata
+2.goto /mydata
+3. create 2 files there and add smore text in these 2 files
+4.clear

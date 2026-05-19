@@ -145,26 +145,103 @@ Practically:
    10. True
    11. False
    12. False
+
+  //24-03-26 
+   ##FIle permission
+   --3 levels of ownership
+   1. owner/user
+   2. grp owner
+   3. other
+permissions- read,write and execute
+[root@rhel ~]# ls -l /file1.txt
+-rw-r--r--. 1 root root 0 Mar 25 11:01 /file1.txt
+[root@rhel ~]# ls -ld /newdi
+drwxr-xr-x. 2 root root 6 Mar 25 11:02 /newdi
+
+explaination:
+-file , d -directory 
+rwx -user, rwx - group, rwx-other 
+2 = link
+root = user/owner , root= group owner
+6 = size , created/updated date , time .... file/directory name
+
+base permission: full permission
+file:777
+directory:666
+
+default permission:
+file:755
+directory:644
+
+umask:(which permission to assign)
+file:022
+directory:  022 
+
+##chmod: change permission
+syntax: chmod [ugo] [operator] [permission] [] 
+ eg:
+ >chmod g-w filename
+ >ls -l ------->(check permission)  
+ >chmod g-w, u-wx, o-rx data1 (seperate permission for user,grp and other)
+ > chmod 777 data1 ---> fulll permission (to user,grp and other) 
+   
+ root@rhel mnt]# history
+    1  clear
+    2  ls -l
+    3  cd /mnt
+    4  cd /mnt/
+    5  ls
+    6  mkdir data1
+    7  ls
+    8  ls -l
+    9  chmod g-w data1
+   10  ls -l
+   11  chmod g-w, u-wx, o-rx data1
+   12  chmod g-w,u-wx,o-rx data1
+   13  ls
+   14  ls -l
+   15  chmod 777 data1
+   16  ls -l
+   17  chmod 755 data1
+   18  ls -l
+   19  history
+[root@rhel mnt]#   
+   
+##chown - > change owner
+   use 'exit' to come  out of  any user
+
+   ## su command
+   >su - sam //home directory changes i.e user changes with full env
+   >su sam // env same only user changes
+   
+   ##Root drive 
+   //personal space of root user 
+   >cd /
    
    
+   [root@rhel ~]# history
+    1  clear
+    2  ls -l /usr/bin/passwd
+    3  useradd prachi
+    4  passwd prachi
+    5  su - prachi
+    6  chmod u+s /usr/bin/ls
+    7  ls -l /root
+    8  su - prachi
+    9  ls -l /root
+   10  find / -perm /u=s
+   11  history
+[root@rhel ~]# 
    
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
+   ##SUID TOPIC
+ >create new user and add passwd
+ >su - username
+ passws change>
+>passwd username
+
+
+
+
    
    
    
