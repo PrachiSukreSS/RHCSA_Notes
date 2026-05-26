@@ -1,0 +1,88 @@
+##1. Password Reset:
+   - blank screen - up down key 
+   - use rescue kernel,, select it (read only ro -> read write rw) *if not done this then use mount remount  command 
+   - we have access sysroot filesystem utility to access storage (make changes in shadow file -temporary)
+   -SELINUX policy will reject this changes /shadow file  - {So, /autorelabel to make changes accept}
+   - 
+##2.set default target
+$systemctl set -deafult targetname
+
+//graphical to mutltiuser switch:
+systemctl set-default multiuser.target
+or 
+systemctl isolate multiuser.target
+
+//taking ssh of root ?
+
+//set
+login:password
+$ip a
+take ssh elsewhere
+
+//2.30 min exam
+//req- pan , adhaar, cld id , water bottle , no phone , rings, room scanning , fill form , chatbox connected to proctor (can lock screen) can listens to u, no lipsing, after taking system access then 2.30 min starts, exam control tab in menu - to control vms, poweron, view vm, QP - instruction page (password given there) base urls for repos (give any name) - gpt check- 0 , enable - 1 , squence doesnt matter but better to follow it , 
+- first set ip  network and set ssh for making copy paste easy
+- create 2 repos -> check by installing smthg
+- acl ques - directly not mentioned - identify yourself
+##Q - set grp id - hya direct cha owner baki cha pn hava
+##Q sticky bit- otherthan diretory owner no one should have access to delete this file
+##Q network address setup 
+##Q repo add karun network set up 
+##Q take ssh on base machine  to check network correctly setedup or not
+##Crontab ques by the name of prev user , schedule will be given in words too,
+>check chrod service  (running + enable)
+>chrontab usename -e
+##url dowload karun tar banvaych (algo will be mentioned bzip gzip)
+or ekhada log file la tar karayla
+##grep or find ques (scenario eg - /tmp/result.txt make ...passwd madhe kiti entris chya pudhe bash lihlay type ques..) -> grep
+find (user ch nav deta, tya userchya saglya files user chya dilelya path madhe paste karaychya) **
+##tuned service ruuning + enable kara ani recommended profile set karaychi
+##default target - multiuser / graphic
+##Storage -
+##SELINUX (2 ques)- run your server SElinux policy in eforcing mode/ permissiveor any other mode
+$setenforce 0
+$setenforce 1
+//above are temp
+in exam make permenent 
+/etc/selinux/config make changes here or /etc/selinux/sysconfig
+##NTP ques
+//eg - chronied cha ntp set kraycha - chronie file madhe new entry add karaychi -
+ - restart chronied
+ verify - 2 modes
+ 1.timedatectl (ntp yes )
+ 2.basemachine graphical karaychi - base machine date n time match with vm date and time if match -- ntp setted --2 sec lagtat change hoila
+ //ntp server ani client madhe 2 sec delay asto
+ ##Apache ques(apache install ast tych webpage disat nahi -debgging ques (check why server not working))  ->>> SElinux ques 
+ //server enforcing mode madhe asto mhnun hot nahi
+ //context set karava lagto
+ nahi thvli tr 
+ $man semanage -port
+   -> semanege port -a -t http_port_t -p tcp 81 //change port number by given port number
+##Storage ()
+1.partition creaet + file systm + mount (everything must be given)**perment mount only 
+
+2. swap partition ques
+swapon
+
+3. 3 ques of LVM
+  a) pv vg and lv create - for pv give disk name 
+  b) mount lv
+  c) existing lv chi size increase karaychiy
+  (size or extents ne vadhvaychi)
+
+  ##podman cheques:
+  1.container file download karaychi -> wget ne
+  2. podman build use karun build banvaychi
+  3.create container
+  4.tya container chi systemd banvaychi
+
+imp questions:(root reset, ip set , repo set)
+   ##shell script
+   //grep or find related ques chi shell script banvaychi
+   //text file containing userlist forloop vali script to add those users
+   
+
+
+
+
+

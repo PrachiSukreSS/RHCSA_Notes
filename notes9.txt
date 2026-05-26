@@ -1,0 +1,13 @@
+##Package Management System:
+1. YUM - Yellowdog Updater Modified
+2. DNF - Dandified YUM
+3. APT - Advanced Package Tool
+4. Zypper - openSUSE package manager
+5. Pacman - Arch Linux package manager
+6. RPM - Red Hat Package Manager
+7. dpkg - Debian package manager
+8. Portage - Gentoo package manager
+9. Homebrew - macOS package manager
+10. Chocolatey - Windows package manager
+
+main: yum, rpm, deb,

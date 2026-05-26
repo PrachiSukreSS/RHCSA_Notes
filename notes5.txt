@@ -1,13 +1,13 @@
 ##Storage Management
 
 start -----> boot process --------> login screen
-1.power on :
-BIOS(redhat) OR UEFI firmware is executed //
-POST (Power On Self Test) is performed: 
+1.power on : //on ROM
+//first  - 
+  POST (Power On Self Test) is performed: 
    -Checks hardware components
    -Initializes hardware
    -Searches for bootloader
-  
+  BIOS(redhat) OR UEFI firmware is executed 
 2. Bootloader (GRUB) is loaded :
       -GRUB (Grand Unified Bootloader) is a common bootloader used in Linux systems
       -GRUB is responsible for loading the Linux kernel and initial RAM disk (initrd) into memory
@@ -40,7 +40,24 @@ POST (Power On Self Test) is performed:
       -After all necessary services and targets are started, the login screen is displayed
       -Users can log in to the system and start using itLogout and shutdown :
       -Users can log out of the system, which will return them to the login screen
-      -Users can also shut down or reboot the system using appropriate commands (e.g., shutdown, reboot)            
+      -Users can also shut down or reboot the system using appropriate commands (e.g., shutdown, reboot)   
+
+OVERALL:                
+POST -> BIOS (temp filesystem mount)-> selct bootlable devices -> find Kernel(in /boot) -> INITRAMFS (pages and segment file system) 
+-> default target(/etc/systemd/) filesystem mount -> systemd (PID 1)
+
+//5  Targets:
+1.multiuser.target
+2.graphical.target
+3.rescue.target
+4.reboot.target
+5.poweroff.target
+
+1.single and dual boot diff.?
+2.how to set default kernel?
+
+in dual boot - 
+-kernel gives choice to choose between windows and linux
 
 ##Types of boot process:
 1. Cold boot/Hard boot: Starting the computer from a powered-off state.
